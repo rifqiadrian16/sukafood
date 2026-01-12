@@ -15,7 +15,10 @@
         "Menu_Andalan": "Bubur Ayam Spesial, Kroket, Risoles",
         "Fasilitas": "Parkir Luas, Musholla, Toilet, Halal"
       },
-      "geometry": { "type": "Point", "coordinates": [106.9268, -6.9195] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.93496558085485, -6.9122028879450745]
+      }
     },
     {
       "type": "Feature",
@@ -63,7 +66,10 @@
         "Menu_Andalan": "Es Kopi Susu Gula Aren, Croissant",
         "Fasilitas": "WiFi Kencang, Stop Kontak, Smoking Area"
       },
-      "geometry": { "type": "Point", "coordinates": [106.928, -6.918] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.9045885586538, -6.881058137415117]
+      }
     },
     {
       "type": "Feature",
@@ -95,7 +101,10 @@
         "Menu_Andalan": "Nasi Uduk Ungu, Ayam Bakar Madu",
         "Fasilitas": "Ruang VIP, Parkir Mobil Luas"
       },
-      "geometry": { "type": "Point", "coordinates": [106.915, -6.9165] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.91946142318365, -6.91867308739753]
+      }
     },
     {
       "type": "Feature",
@@ -159,7 +168,10 @@
         "Menu_Andalan": "Ayam Goreng Kampung, Pepes Ikan, Lalapan",
         "Fasilitas": "Musholla, Parkir Motor"
       },
-      "geometry": { "type": "Point", "coordinates": [106.9285, -6.915] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.93242189659804, -6.917689277755079]
+      }
     },
     {
       "type": "Feature",
@@ -207,7 +219,10 @@
         "Menu_Andalan": "Piscok Lumer, Pisang Keju",
         "Fasilitas": "Take Away Only"
       },
-      "geometry": { "type": "Point", "coordinates": [106.93, -6.914] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.92313924232869, -6.921484666937616]
+      }
     },
     {
       "type": "Feature",
