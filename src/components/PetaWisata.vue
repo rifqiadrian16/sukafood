@@ -328,7 +328,7 @@ function tampilkanData(dataGeoJSON) {
       const jenis = (props.Jenis_Kuliner || "").toLowerCase();
       if (jenis.includes("bubur"))
         gambarUrl =
-          "https://images.unsplash.com/photo-1563895351829-9231f82173f4?w=400";
+          "https://sukabumizone.com/wp-content/uploads/2023/01/IMG_20230116_150451_wZ9nkm4Y79.jpeg";
       else if (jenis.includes("mi") || jenis.includes("bakso"))
         gambarUrl =
           "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=400";
