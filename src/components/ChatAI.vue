@@ -393,8 +393,8 @@ function formatMessage(text) {
   }
 
   .btn-chat {
-    bottom: 150px; /* Posisi tombol saat chat tertutup */
-    right: 15px;
+    bottom: 220px; /* Posisi tombol saat chat tertutup */
+    right: 10px;
   }
 }
 </style>

@@ -71,7 +71,7 @@
       </button>
     </transition>
 
-    <div id="map" ref="mapContainer"></div>
+    <div id="map" ref="mapContainer" :class="zoomClass"></div>
   </div>
 
   <ChatAI />
@@ -85,12 +85,12 @@ window.panggilRute = (lat, lng) => {
 import { onMounted, ref } from "vue";
 import ChatAI from "./ChatAI.vue";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 const routingControl = ref(null);
 const isRouteActive = ref(false);
+const zoomClass = ref("");
 
 const filterContainerRef = ref(null);
 const scrollContainer = ref(null);
@@ -144,18 +144,31 @@ const isRainLayerActive = ref(false);
 
 // --- KONFIGURASI ICON ---
 const iconConfig = {
-  iconSize: [28, 28],
+  iconSize: [32, 32],
   iconAnchor: [14, 28],
   popupAnchor: [0, -25],
   shadowSize: [30, 30],
 };
 const iconCafe = L.icon({ ...iconConfig, iconUrl: "/images/coffee-cup.png" });
 const iconDefault = L.icon({ ...iconConfig, iconUrl: "/images/resto.png" });
+const iconUser = L.icon({
+  ...iconConfig,
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/535/535137.png", // Icon Orang/Lokasi
+  className: "marker-user", // Kita kasih class biar bisa di-style (opsional)
+});
 
 onMounted(() => {
   initMap();
   loadData();
   loadCuaca();
+
+  // --- TAMBAHAN: Deteksi Perubahan Full Screen ---
+  // Memaksa Leaflet menghitung ulang ukuran peta saat masuk/keluar full screen
+  document.addEventListener("fullscreenchange", () => {
+    setTimeout(() => {
+      if (map.value) map.value.invalidateSize();
+    }, 200); // Beri jeda sedikit agar animasi full screen selesai dulu
+  });
 });
 
 if (filterContainerRef.value) {
@@ -184,10 +197,25 @@ async function loadCuaca() {
 
 // --- FUNGSI 2: Inisialisasi Peta ---
 function initMap() {
-  map.value = L.map("map", { zoomControl: false }).setView(
+  map.value = L.map("map", { zoomControl: false, preferCanvas: false }).setView(
     [KOTA_LAT, KOTA_LON],
     14
   );
+
+  map.value.on("zoomend", () => {
+    const z = map.value.getZoom();
+
+    // Logika Ukuran Berdasarkan Level Zoom
+    if (z >= 16) {
+      zoomClass.value = "zoom-large"; // Zoom Dekat (Ikon Besar)
+    } else if (z >= 14) {
+      zoomClass.value = "zoom-normal"; // Zoom Standar (Ikon Normal)
+    } else if (z === 13) {
+      zoomClass.value = "zoom-small"; // Zoom Sedang (Ikon Mengecil)
+    } else {
+      zoomClass.value = "zoom-hidden"; // Zoom Jauh (Ikon Hilang)
+    }
+  });
 
   L.control.zoom({ position: "bottomright" }).addTo(map.value);
 
@@ -253,7 +281,16 @@ function initMap() {
     .then((res) => res.json())
     .then((data) => {
       L.geoJSON(data, {
-        style: { color: "#0000FF", weight: 2, opacity: 0.6, fillOpacity: 0.05 },
+        style: {
+          color: "#0000FF",
+          weight: 2,
+          opacity: 0.6,
+          fillOpacity: 0.05,
+        },
+        // --- PERBAIKAN DI SINI ---
+        smoothFactor: 1, // Ubah dari 0 ke 1 (Default). Agar ringan & tidak "drifting".
+        noClip: true, // Tetap true (Agar garis tidak putus/muncul garis lurus aneh).
+        // -------------------------
       }).addTo(batasLayer);
     })
     .catch((err) => console.error("Gagal load batas:", err));
@@ -303,7 +340,7 @@ function tampilkanData(dataGeoJSON) {
           <h4 style="color: #ff9f1c; margin: 5px 0; font-size: 1rem;">${props.Nama_Tempat}</h4>
           <span style="background:#eee; padding:2px 8px; border-radius:4px; font-size:0.7rem; color: #555;">${props.Jenis_Kuliner}</span>
           <p style="margin: 8px 0; font-size: 0.85rem;">⭐ <b>${props.Rating}</b> (${props.Jumlah_Review})</p>
-          <button onclick="panggilRute(${feature.geometry.coordinates[1]}, ${feature.geometry.coordinates[0]})" 
+          <button onclick="panggilRute(${feature.geometry.coordinates[1]}, ${feature.geometry.coordinates[0]})"
         style="width:100%; background: #2ec4b6; color: white; border:none; padding: 8px; border-radius: 4px; cursor:pointer; margin-top:5px;">
    <i class="fas fa-route"></i> Rute Jalan (In-App)
 </button>
@@ -363,8 +400,8 @@ function cariLokasiSaya() {
   }
   navigator.geolocation.getCurrentPosition((position) => {
     const { latitude, longitude } = position.coords;
-    map.value.flyTo([latitude, longitude], 16);
-    L.marker([latitude, longitude])
+    map.value.flyTo([latitude, longitude], 18);
+    L.marker([latitude, longitude], { icon: iconUser })
       .addTo(map.value)
       .bindPopup("Lokasi Anda")
       .openPopup();
@@ -445,8 +482,8 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
 
 .btn-gps {
   position: absolute;
-  bottom: 95px; /* Di atas tombol zoom default Leaflet */
-  right: 12px;
+  bottom: 100px; /* Di atas tombol zoom default Leaflet */
+  right: 10px;
   z-index: 1000;
   background: white;
   border: none;
@@ -741,6 +778,43 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
 
 .btn-close-route i {
   font-size: 1rem;
+}
+
+:deep(.leaflet-marker-icon) {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-origin: bottom center; /* Titik tumpu di bawah */
+}
+
+/* 1. Zoom Normal (Level 14-15) - Ukuran Asli 28x28 */
+.zoom-normal :deep(.leaflet-marker-icon) {
+  /* Tidak perlu diubah, pakai default */
+}
+
+/* 2. Zoom Besar (Level 16+) - Sedikit Membesar */
+.zoom-large :deep(.leaflet-marker-icon) {
+  width: 36px !important;
+  height: 36px !important;
+  margin-left: -18px !important; /* Setengah dari width */
+  margin-top: -36px !important; /* Full height */
+  z-index: 1000 !important; /* Selalu di atas */
+}
+
+/* 3. Zoom Kecil (Level 13) - Mengecil */
+.zoom-small :deep(.leaflet-marker-icon) {
+  width: 18px !important;
+  height: 18px !important;
+  margin-left: -9px !important; /* Setengah dari width */
+  margin-top: -18px !important; /* Full height */
+  opacity: 0.8;
+}
+
+/* 4. Zoom Jauh (Level < 13) - Hilang/Sembunyi */
+.zoom-hidden :deep(.leaflet-marker-icon),
+.zoom-hidden :deep(.leaflet-marker-shadow) {
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0;
+  pointer-events: none; /* Agar tidak bisa diklik saat hilang */
 }
 
 /* --- RESPONSIVE MOBILE --- */

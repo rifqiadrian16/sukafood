@@ -314,9 +314,9 @@ footer {
         <a href="#sorotan" @click="tutupMenu">Populer</a>
         <a href="#about" @click="tutupMenu">Tentang</a>
         <a href="#faq" @click="tutupMenu">FAQ</a>
-        <router-link to="/peta" class="btn-nav-cta" @click="tutupMenu">
+        <a @click.prevent="bukaPeta" href="#" class="btn-cta primary">
           Buka Peta
-        </router-link>
+        </a>
       </div>
     </nav>
 
@@ -334,9 +334,9 @@ footer {
         </p>
 
         <div class="hero-buttons">
-          <router-link to="/peta" class="btn-cta primary">
+          <a @click.prevent="bukaPeta" href="#" class="btn-cta primary">
             Mulai Jelajah <i class="fas fa-map-marked-alt"></i>
-          </router-link>
+          </a>
           <a href="#sorotan" class="btn-cta secondary"> Lihat Rekomendasi </a>
         </div>
       </div>
@@ -383,9 +383,9 @@ footer {
             <p>{{ item.desc }}</p>
             <div class="card-footer">
               <span class="price">{{ item.harga }}</span>
-              <router-link to="/peta" class="btn-link"
-                >Lihat Lokasi &rarr;</router-link
-              >
+              <a @click.prevent="bukaPeta" href="#" class="btn-cta primary">
+                Lihat Lokasi &rarr;>
+              </a>
             </div>
           </div>
         </div>
@@ -442,9 +442,9 @@ footer {
       <div class="cta-content">
         <h2>Siap Memanjakan Lidah?</h2>
         <p>Akses peta sekarang dan temukan surga makanan di sekitar Anda.</p>
-        <router-link to="/peta" class="btn-cta white">
+        <a @click.prevent="bukaPeta" href="#" class="btn-cta primary">
           Buka Peta Sekarang
-        </router-link>
+        </a>
       </div>
     </section>
 
@@ -497,6 +497,30 @@ footer {
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+async function bukaPeta() {
+  try {
+    const elem = document.documentElement;
+    // Cek apakah browser mendukung full screen
+    if (elem.requestFullscreen) {
+      await elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      /* Safari */
+      await elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      /* IE11 */
+      await elem.msRequestFullscreen();
+    }
+  } catch (err) {
+    console.log("Full screen ditolak atau tidak didukung browser", err);
+  } finally {
+    // Tetap pindah halaman meskipun full screen gagal
+    router.push("/peta");
+  }
+}
 
 // --- STATE ---
 const isMenuOpen = ref(false);
@@ -745,7 +769,7 @@ nav.scrolled .nav-links a {
 }
 
 .btn-cta {
-  padding: 15px 35px;
+  padding: 10px 15px;
   border-radius: 50px;
   font-weight: 600;
   text-decoration: none;

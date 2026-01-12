@@ -24,17 +24,61 @@ body {
   display: block;
 }
 
-/* GANTI DENGAN INI (Lebih Aman) */
-/* Hanya targetkan gambar marker dan bayangannya */
 .leaflet-marker-icon,
 .leaflet-marker-shadow {
   max-width: none !important;
   max-height: none !important;
-  /* Hapus width: auto agar tidak merusak ukuran asli icon */
 }
 
-/* Jika Anda menggunakan DivIcon yang berisi gambar (opsional) */
 .leaflet-marker-pane img {
   max-width: none !important;
   max-height: none !important;
+}
+
+/* --- SOLUSI ERROR BATAS WILAYAH MELAYANG (DRIFTING) --- */
+/* Paksa matikan semua transisi CSS pada elemen grafis Leaflet */
+.leaflet-container path,
+.leaflet-container svg,
+.leaflet-container canvas,
+.leaflet-container img {
+  transition: none !important;
+  transform-origin: center center; /* Pastikan titik tumpu zoom di tengah */
+}
+
+/* Pastikan layer zoom animasi tetap berjalan normal (hanya transform) */
+.leaflet-zoom-animated {
+  transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1) !important;
+}
+
+.leaflet-popup-close-button {
+  /* 1. Paksa Posisi di Pojok Kanan Atas */
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+
+  /* 2. Hilangkan Garis Bawah & Warna Biru Link */
+  text-decoration: none !important;
+  color: #555 !important;
+
+  /* 3. Percantik Tampilan (Bulat Putih) */
+  width: 24px !important;
+  height: 24px !important;
+  background: white !important;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+
+  /* 4. Pastikan isi (huruf x) di tengah */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px !important;
+  padding: 0 !important;
+  margin: 0 !important; /* Reset margin */
+}
+
+/* Efek Hover */
+.leaflet-popup-close-button:hover {
+  background: #ff3b30 !important; /* Merah saat disorot */
+  color: white !important;
+  text-decoration: none !important;
 }
