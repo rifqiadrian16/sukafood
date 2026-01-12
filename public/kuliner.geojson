@@ -1,0 +1,309 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Bubur Ayam Bunut Siliwangi",
+        "Jenis_Kuliner": "Bubur",
+        "Rating": 4.8,
+        "Jumlah_Review": 1250,
+        "Alamat": "Jl. Siliwangi No.93, Cikole",
+        "Deskripsi_Suasana": "Legenda kuliner Sukabumi sejak 1980-an. Tempat luas, cocok untuk sarapan keluarga. Nuansa tradisional yang hangat.",
+        "Kisaran_Harga": "Rp 15.000 - Rp 35.000",
+        "Jam_Buka": "06:00 - 22:00 WIB",
+        "Menu_Andalan": "Bubur Ayam Spesial, Kroket, Risoles",
+        "Fasilitas": "Parkir Luas, Musholla, Toilet, Halal"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9268, -6.9195] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Mochi Kaswari Lampion",
+        "Jenis_Kuliner": "Oleh-oleh",
+        "Rating": 4.7,
+        "Jumlah_Review": 3400,
+        "Alamat": "Gg. Kaswari No.19, Selabatu",
+        "Deskripsi_Suasana": "Pusat oleh-oleh ikonik di dalam gang. Pengunjung bisa melihat proses pembuatan mochi langsung. Aroma pandan yang khas.",
+        "Kisaran_Harga": "Rp 40.000 - Rp 60.000",
+        "Jam_Buka": "08:00 - 16:00 WIB",
+        "Menu_Andalan": "Mochi Kacang Ijo, Mochi Keju",
+        "Fasilitas": "Tester Makanan, Area Parkir Terbatas"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9312, -6.9123] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Mie Bakso Mas Kumis",
+        "Jenis_Kuliner": "Bakso",
+        "Rating": 4.6,
+        "Jumlah_Review": 850,
+        "Alamat": "Jl. A. Yani, Gunungparang",
+        "Deskripsi_Suasana": "Warung bakso legendaris dengan gerobak di depan ruko. Suasana merakyat, panas, tapi rasa kuah kaldunya juara.",
+        "Kisaran_Harga": "Rp 18.000 - Rp 25.000",
+        "Jam_Buka": "10:00 - 21:00 WIB",
+        "Menu_Andalan": "Bakso Urat, Mie Yamin Manis",
+        "Fasilitas": "Kipas Angin"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9245, -6.923] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Kopi Bumi",
+        "Jenis_Kuliner": "Café",
+        "Rating": 4.5,
+        "Jumlah_Review": 420,
+        "Alamat": "Jl. Siliwangi, Kebonjati",
+        "Deskripsi_Suasana": "Coffee shop industrial modern dengan area outdoor asri. Cocok untuk WFC atau nongkrong sore.",
+        "Kisaran_Harga": "Rp 25.000 - Rp 50.000",
+        "Jam_Buka": "09:00 - 23:00 WIB",
+        "Menu_Andalan": "Es Kopi Susu Gula Aren, Croissant",
+        "Fasilitas": "WiFi Kencang, Stop Kontak, Smoking Area"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.928, -6.918] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Sate H. Mamat",
+        "Jenis_Kuliner": "Sate",
+        "Rating": 4.7,
+        "Jumlah_Review": 1100,
+        "Alamat": "Jl. Ahmad Yani No. 34",
+        "Deskripsi_Suasana": "Kedai sate dengan asap bakaran yang menggugah selera. Potongan daging besar dan bumbu kacang kental.",
+        "Kisaran_Harga": "Rp 30.000 - Rp 55.000",
+        "Jam_Buka": "16:00 - 23:00 WIB",
+        "Menu_Andalan": "Sate Kambing Muda, Sop Kambing",
+        "Fasilitas": "Lesehan, Toilet"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9225, -6.925] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Mamih Ungu Resto",
+        "Jenis_Kuliner": "Resto & Café",
+        "Rating": 4.4,
+        "Jumlah_Review": 900,
+        "Alamat": "Jl. Brawijaya No. 16",
+        "Deskripsi_Suasana": "Restoran unik serba ungu. Tempat luas, bersih, sering dipakai acara keluarga.",
+        "Kisaran_Harga": "Rp 25.000 - Rp 70.000",
+        "Jam_Buka": "10:00 - 21:00 WIB",
+        "Menu_Andalan": "Nasi Uduk Ungu, Ayam Bakar Madu",
+        "Fasilitas": "Ruang VIP, Parkir Mobil Luas"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.915, -6.9165] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Bandros Atta",
+        "Jenis_Kuliner": "Street Food",
+        "Rating": 4.8,
+        "Jumlah_Review": 500,
+        "Alamat": "Jl. Gudang, Cikole (Trotoar)",
+        "Deskripsi_Suasana": "Jajanan malam kaki lima paling hits. Makan bandros hangat di pinggir jalan sambil menikmati suasana malam.",
+        "Kisaran_Harga": "Rp 10.000 - Rp 20.000",
+        "Jam_Buka": "18:00 - 01:00 WIB",
+        "Menu_Andalan": "Bandros Coklat Keju, Susu Murni",
+        "Fasilitas": "Bangku Pinggir Jalan"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9295, -6.9215] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Soto Mie Agih",
+        "Jenis_Kuliner": "Non-Halal",
+        "Rating": 4.9,
+        "Jumlah_Review": 1500,
+        "Alamat": "Jl. Pejagalan No.23",
+        "Deskripsi_Suasana": "Soto mie legendaris dengan porsi besar. Selalu antre saat makan siang. Non-Halal (mengandung Babi).",
+        "Kisaran_Harga": "Rp 35.000 - Rp 50.000",
+        "Jam_Buka": "09:00 - 17:00 WIB",
+        "Menu_Andalan": "Soto Mie Babat, Mie Kocok",
+        "Fasilitas": "AC, Tidak Ada Parkir Mobil"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9255, -6.9205] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Sekoteng Singapore",
+        "Jenis_Kuliner": "Street Food",
+        "Rating": 4.6,
+        "Jumlah_Review": 600,
+        "Alamat": "Jl. A. Yani (Depan Supermall)",
+        "Deskripsi_Suasana": "Minuman hangat malam hari. Gerobak sederhana tapi rasa sekotengnya otentik dan menyegarkan.",
+        "Kisaran_Harga": "Rp 10.000 - Rp 15.000",
+        "Jam_Buka": "17:00 - 23:00 WIB",
+        "Menu_Andalan": "Sekoteng Jahe, Roti Bakar",
+        "Fasilitas": "Kaki Lima"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9238, -6.9222] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Rumah Makan Cikole",
+        "Jenis_Kuliner": "Resto",
+        "Rating": 4.5,
+        "Jumlah_Review": 800,
+        "Alamat": "Jl. Cikole Dalam No. 32",
+        "Deskripsi_Suasana": "Masakan Sunda prasmanan dengan suasana rumah tua yang asri. Pilihan lauk sangat banyak.",
+        "Kisaran_Harga": "Rp 20.000 - Rp 40.000",
+        "Jam_Buka": "10:00 - 20:00 WIB",
+        "Menu_Andalan": "Ayam Goreng Kampung, Pepes Ikan, Lalapan",
+        "Fasilitas": "Musholla, Parkir Motor"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9285, -6.915] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Butler Bar & Bistro",
+        "Jenis_Kuliner": "Café",
+        "Rating": 4.6,
+        "Jumlah_Review": 300,
+        "Alamat": "Jl. Siliwangi No. 111",
+        "Deskripsi_Suasana": "Cafe mewah dengan interior klasik Eropa. Cocok untuk dinner romantis atau acara formal.",
+        "Kisaran_Harga": "Rp 50.000 - Rp 150.000",
+        "Jam_Buka": "11:00 - 23:00 WIB",
+        "Menu_Andalan": "Steak, Pasta Carbonara, Mocktails",
+        "Fasilitas": "Full AC, WiFi, Parkir Valet"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.9275, -6.9188] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Bubur Ayam Odeon",
+        "Jenis_Kuliner": "Bubur",
+        "Rating": 4.7,
+        "Jumlah_Review": 950,
+        "Alamat": "Jl. Pajagalan, Nyomplong",
+        "Deskripsi_Suasana": "Bubur ayam chinese style yang kental dan gurih. Menggunakan ayam kampung asli. Tempatnya sederhana tapi selalu penuh.",
+        "Kisaran_Harga": "Rp 25.000 - Rp 40.000",
+        "Jam_Buka": "07:00 - 21:00 WIB",
+        "Menu_Andalan": "Bubur Ayam Kampung, Pindang Telur",
+        "Fasilitas": "Meja Bundar, Non-Halal Available"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.921, -6.924] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Piscok Cakra",
+        "Jenis_Kuliner": "Street Food",
+        "Rating": 4.8,
+        "Jumlah_Review": 1200,
+        "Alamat": "Jl. R.E. Martadinata",
+        "Deskripsi_Suasana": "Jajanan pisang coklat lumer yang sangat terkenal. Selalu antre panjang. Kulit lumpianya renyah, coklatnya melimpah.",
+        "Kisaran_Harga": "Rp 3.000 - Rp 5.000 (per pcs)",
+        "Jam_Buka": "15:00 - 22:00 WIB",
+        "Menu_Andalan": "Piscok Lumer, Pisang Keju",
+        "Fasilitas": "Take Away Only"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.93, -6.914] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Martabak San Francisco",
+        "Jenis_Kuliner": "Street Food",
+        "Rating": 4.5,
+        "Jumlah_Review": 700,
+        "Alamat": "Jl. Jend. Sudirman",
+        "Deskripsi_Suasana": "Martabak premium dengan topping tebal. Pilihan rasa modern seperti Nutella, Skippy, dan Toblerone.",
+        "Kisaran_Harga": "Rp 50.000 - Rp 120.000",
+        "Jam_Buka": "16:00 - 23:00 WIB",
+        "Menu_Andalan": "Martabak Manis Toblerone, Martabak Telur Spesial",
+        "Fasilitas": "Parkir Motor"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.922, -6.919] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Praline Coffee & Patisserie",
+        "Jenis_Kuliner": "Café",
+        "Rating": 4.6,
+        "Jumlah_Review": 350,
+        "Alamat": "Jl. Surya Kencana",
+        "Deskripsi_Suasana": "Cafe dengan spesialisasi kue dan pastry. Tempatnya cantik (aesthetic), tenang, dan wangi kue yang baru dipanggang.",
+        "Kisaran_Harga": "Rp 30.000 - Rp 60.000",
+        "Jam_Buka": "08:00 - 20:00 WIB",
+        "Menu_Andalan": "Cromboloni, Red Velvet Cake, Latte",
+        "Fasilitas": "WiFi, Spot Foto Instagramable"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.932, -6.916] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Seblak Jeletet Teh Risma",
+        "Jenis_Kuliner": "Street Food",
+        "Rating": 4.3,
+        "Jumlah_Review": 400,
+        "Alamat": "Jl. Pelabuhan II",
+        "Deskripsi_Suasana": "Warung seblak prasmanan favorit pelajar. Level pedas bisa diatur sesuai selera. Tempat sederhana tapi ramai.",
+        "Kisaran_Harga": "Rp 10.000 - Rp 25.000",
+        "Jam_Buka": "11:00 - 20:00 WIB",
+        "Menu_Andalan": "Seblak Ceker, Seblak Tulang",
+        "Fasilitas": "Lesehan"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.926, -6.93] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Gado-Gado Cikole",
+        "Jenis_Kuliner": "Resto",
+        "Rating": 4.6,
+        "Jumlah_Review": 550,
+        "Alamat": "Jl. Cikole",
+        "Deskripsi_Suasana": "Rumah makan spesialis gado-gado sejak tahun 90-an. Bumbu kacangnya sangat halus dan sayurannya segar.",
+        "Kisaran_Harga": "Rp 20.000 - Rp 30.000",
+        "Jam_Buka": "09:00 - 16:00 WIB",
+        "Menu_Andalan": "Gado-Gado Lontong, Es Cendol",
+        "Fasilitas": "Meja Keluarga"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.929, -6.913] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Mie Ayam Banyumas",
+        "Jenis_Kuliner": "Bakso",
+        "Rating": 4.4,
+        "Jumlah_Review": 300,
+        "Alamat": "Jl. Bhayangkara",
+        "Deskripsi_Suasana": "Mie ayam gerobakan yang menetap di ruko. Mie-nya kenyal buatan sendiri dengan topping ayam kecap manis gurih.",
+        "Kisaran_Harga": "Rp 12.000 - Rp 18.000",
+        "Jam_Buka": "10:00 - 20:00 WIB",
+        "Menu_Andalan": "Mie Ayam Bakso, Pangsit Goreng",
+        "Fasilitas": "Parkir Motor"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.918, -6.917] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Nama_Tempat": "Red Brick Cafe",
+        "Jenis_Kuliner": "Café",
+        "Rating": 4.5,
+        "Jumlah_Review": 600,
+        "Alamat": "Jl. Pelabuhan II",
+        "Deskripsi_Suasana": "Cafe dengan desain batu bata merah yang ikonik. Menu variatif dari western sampai indonesia. Sering ada live music.",
+        "Kisaran_Harga": "Rp 30.000 - Rp 80.000",
+        "Jam_Buka": "11:00 - 23:00 WIB",
+        "Menu_Andalan": "Pizza Kayu Bakar, Spaghetti Aglio Olio",
+        "Fasilitas": "Live Music, WiFi, Parkir Mobil"
+      },
+      "geometry": { "type": "Point", "coordinates": [106.925, -6.932] }
+    }
+  ]
+}

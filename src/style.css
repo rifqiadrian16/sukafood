@@ -1,0 +1,40 @@
+/* Reset Margin Browser */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Style Font Global */
+body {
+  font-family: "Poppins", sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Konfigurasi Root Vue */
+#app {
+  width: 100%;
+  min-height: 100vh; /* Gunakan MIN-height agar bisa memanjang ke bawah jika konten banyak */
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+/* GANTI DENGAN INI (Lebih Aman) */
+/* Hanya targetkan gambar marker dan bayangannya */
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  max-width: none !important;
+  max-height: none !important;
+  /* Hapus width: auto agar tidak merusak ukuran asli icon */
+}
+
+/* Jika Anda menggunakan DivIcon yang berisi gambar (opsional) */
+.leaflet-marker-pane img {
+  max-width: none !important;
+  max-height: none !important;
+}

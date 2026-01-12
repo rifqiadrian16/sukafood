@@ -1,0 +1,188 @@
+// {
+//   "type": "FeatureCollection",
+//   "features": [
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Joglo Pasundan Soekabumi",
+//         "Jenis_Kuliner": "Resto",
+//         "Rating": 4.4,
+//         "Jumlah_Review": 904
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.91418937116435, -6.918821274646732]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Mamih Ungu Resto and Cafe",
+//         "Jenis_Kuliner": "Resto & Café",
+//         "Rating": 4.3,
+//         "Jumlah_Review": 2168
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.91946142318365, -6.918758293069248]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Jade Restaurant",
+//         "Jenis_Kuliner": "Resto",
+//         "Rating": 4.9,
+//         "Jumlah_Review": 116
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.91798426441794, -6.916289901527815]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Dimsum Bos Sukabumi",
+//         "Jenis_Kuliner": "Dimsum",
+//         "Rating": "5.0",
+//         "Jumlah_Review": 1005
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.91667482208973, -6.917066550746264]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Kedai Surabi Duren",
+//         "Jenis_Kuliner": "Surabi",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 855
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.92237788570671, -6.920578580064243]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Soedirman Street Food",
+//         "Jenis_Kuliner": "Street Food",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 1113
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.92208189240182, -6.920731439017145]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Ayam Bakar Mang Oni",
+//         "Jenis_Kuliner": "Ayam Bakar",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 591
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.92293471104487, -6.921140050654385]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Botram Resto",
+//         "Jenis_Kuliner": "Resto",
+//         "Rating": 4.6,
+//         "Jumlah_Review": 628
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.92947629325384, -6.917278650741478]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Bubur Ayam Odeon kota sukabumi",
+//         "Jenis_Kuliner": "Bubur",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 954
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.92344840674613, -6.925222050562247]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Rumah Makan Cikole Sukabumi",
+//         "Jenis_Kuliner": "Resto",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 1938
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.93241656441796, -6.917710601463735]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Alam Sunda Sukabumi 2",
+//         "Jenis_Kuliner": "Resto",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 3900
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.92945686441794, -6.92246584937577]
+//       },
+//       "id": 10
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Kazoku Tei",
+//         "Jenis_Kuliner": "Resto & Café",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 1860
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.93636673558201, -6.9171074522367855]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Like Earth Coffee",
+//         "Jenis_Kuliner": "Café",
+//         "Rating": 4.5,
+//         "Jumlah_Review": 2295
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.93037520674618, -6.917907650727298]
+//       }
+//     },
+//     {
+//       "type": "Feature",
+//       "properties": {
+//         "Nama_Tempat": "Ciwangi Restaurant & Andi Florest",
+//         "Jenis_Kuliner": "Resto & Café",
+//         "Rating": 4.4,
+//         "Jumlah_Review": 688
+//       },
+//       "geometry": {
+//         "type": "Point",
+//         "coordinates": [106.93018253655352, -6.917882383833918]
+//       }
+//     }
+//   ]
+// }
