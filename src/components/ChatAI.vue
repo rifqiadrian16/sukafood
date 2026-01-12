@@ -1,10 +1,13 @@
 <template>
   <div class="chat-wrapper">
-    <transition name="fade">
-      <button v-show="!isOpen" class="btn-chat" @click="toggleChat">
-        <i class="fas fa-robot"></i>
-      </button>
-    </transition>
+    <button
+      class="btn-chat"
+      :class="{ 'is-active': isOpen }"
+      @click="toggleChat"
+      title="Tanya AI Asisten"
+    >
+      <i class="fas" :class="isOpen ? 'fa-times' : 'fa-robot'"></i>
+    </button>
 
     <transition name="slide-up">
       <div v-if="isOpen" class="chat-window">
@@ -24,7 +27,6 @@
               Halo! Saya AI Asisten SukaFood. Mau cari kuliner apa hari ini? 🍜
             </div>
           </div>
-
           <div
             v-for="(msg, index) in messages"
             :key="index"
@@ -33,7 +35,6 @@
           >
             <div class="bubble" v-html="formatMessage(msg.text)"></div>
           </div>
-
           <div v-if="isLoading" class="message bot">
             <div class="bubble typing">
               <span></span><span></span><span></span>
@@ -45,6 +46,7 @@
           <input
             v-model="userInput"
             @keyup.enter="kirimPesan"
+            @focus="onInputFocus"
             placeholder="Tanya rekomendasi..."
             :disabled="isLoading"
           />
@@ -155,6 +157,13 @@ function scrollToBottom() {
   });
 }
 
+function onInputFocus(event) {
+  // Beri jeda sedikit agar keyboard sempat muncul
+  setTimeout(() => {
+    event.target.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 300);
+}
+
 // Ubah enter (\n) jadi <br> agar rapi
 function formatMessage(text) {
   return text.replace(/\n/g, "<br>");
@@ -163,23 +172,24 @@ function formatMessage(text) {
 
 <style scoped>
 .btn-chat {
-  position: fixed;
-  bottom: 30px;
-  right: 50px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #ff9f1c; /* Warna Tosca */
-  color: white;
+  /* HAPUS: position fixed, bottom, right */
+  position: relative;
+
+  /* Samakan style dengan tombol Map Controls (.btn-control) */
+  width: 35px;
+  height: 35px;
+  background: #ff9f1c;
+  color: #ffffff; /* Warna default gelap */
+  border-radius: 5px; /* Kotak tumpul */
   border: none;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  z-index: 2000;
-  font-size: 1.5rem;
-  transition: 0.3s;
+  font-size: 1.2rem;
+
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.2s;
 }
 
 .btn-chat:hover {
@@ -390,11 +400,6 @@ function formatMessage(text) {
     bottom: 20px; /* Tempel ke bawah sedikit */
     height: 60vh; /* Tinggi 60% layar agar lega */
     border-radius: 15px;
-  }
-
-  .btn-chat {
-    bottom: 220px; /* Posisi tombol saat chat tertutup */
-    right: 10px;
   }
 }
 </style>

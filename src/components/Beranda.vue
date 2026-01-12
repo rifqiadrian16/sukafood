@@ -501,25 +501,8 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-async function bukaPeta() {
-  try {
-    const elem = document.documentElement;
-    // Cek apakah browser mendukung full screen
-    if (elem.requestFullscreen) {
-      await elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-      /* Safari */
-      await elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      /* IE11 */
-      await elem.msRequestFullscreen();
-    }
-  } catch (err) {
-    console.log("Full screen ditolak atau tidak didukung browser", err);
-  } finally {
-    // Tetap pindah halaman meskipun full screen gagal
-    router.push("/peta");
-  }
+function bukaPeta() {
+  router.push("/peta");
 }
 
 // --- STATE ---

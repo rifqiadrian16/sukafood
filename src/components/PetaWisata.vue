@@ -31,6 +31,7 @@
           v-model="searchQuery"
           placeholder="Cari kuliner"
           @input="onSearchInput"
+          @focus="onSearchFocus"
         />
       </div>
 
@@ -61,9 +62,17 @@
       </div>
     </div>
 
-    <button class="btn-gps" @click="cariLokasiSaya" title="Lokasi Saya">
-      <i class="fas fa-crosshairs"></i>
-    </button>
+    <div class="map-controls">
+      <ChatAI />
+
+      <button class="btn-control" @click="toggleFullscreen" title="Layar Penuh">
+        <i class="fas" :class="isFullscreen ? 'fa-compress' : 'fa-expand'"></i>
+      </button>
+
+      <button class="btn-control" @click="cariLokasiSaya" title="Lokasi Saya">
+        <i class="fas fa-crosshairs"></i>
+      </button>
+    </div>
 
     <transition name="fade">
       <button v-if="isRouteActive" class="btn-close-route" @click="hapusRute">
@@ -73,66 +82,25 @@
 
     <div id="map" ref="mapContainer" :class="zoomClass"></div>
   </div>
-
-  <ChatAI />
 </template>
 
 <script setup>
+// Expose function ke window agar bisa dipanggil dari string HTML popup
 window.panggilRute = (lat, lng) => {
   buatRuteKeTujuan(lat, lng);
 };
 
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import ChatAI from "./ChatAI.vue";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
+// --- STATE ---
 const routingControl = ref(null);
 const isRouteActive = ref(false);
 const zoomClass = ref("");
-
-const filterContainerRef = ref(null);
-const scrollContainer = ref(null);
-let isDown = false;
-let startX;
-let scrollLeft;
-
-function startDrag(e) {
-  isDown = true;
-  // Ambil posisi awal mouse
-  startX = e.pageX - scrollContainer.value.offsetLeft;
-  // Ambil posisi scroll saat ini
-  scrollLeft = scrollContainer.value.scrollLeft;
-  // Ubah kursor jadi "menggenggam"
-  scrollContainer.value.style.cursor = "grabbing";
-}
-
-function stopDrag() {
-  isDown = false;
-  if (scrollContainer.value) {
-    scrollContainer.value.style.cursor = "grab";
-  }
-}
-
-function onDrag(e) {
-  if (!isDown) return; // Jika mouse tidak dipencet, jangan lakukan apa-apa
-  e.preventDefault(); // Mencegah seleksi teks saat menggeser
-
-  // Hitung seberapa jauh mouse digeser
-  const x = e.pageX - scrollContainer.value.offsetLeft;
-  const walk = (x - startX) * 2; // Kalikan 2 agar gesernya lebih cepat (sensitivitas)
-
-  // Update posisi scroll
-  scrollContainer.value.scrollLeft = scrollLeft - walk;
-}
-
-// --- KONFIGURASI API ---
-const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
-const KOTA_LAT = -6.921;
-const KOTA_LON = 106.927;
-
-// --- STATE ---
+const isFullscreen = ref(false);
 const map = ref(null);
 const pointsLayer = ref(null);
 const filterAktif = ref("all");
@@ -142,7 +110,38 @@ const daftarKategori = ref([]);
 const infoCuaca = ref({ temp: null, desc: "", icon: "" });
 const isRainLayerActive = ref(false);
 
-// --- KONFIGURASI ICON ---
+// --- DRAG SCROLL FILTER ---
+const filterContainerRef = ref(null);
+const scrollContainer = ref(null);
+let isDown = false;
+let startX;
+let scrollLeft;
+
+function startDrag(e) {
+  isDown = true;
+  startX = e.pageX - scrollContainer.value.offsetLeft;
+  scrollLeft = scrollContainer.value.scrollLeft;
+  scrollContainer.value.style.cursor = "grabbing";
+}
+
+function stopDrag() {
+  isDown = false;
+  if (scrollContainer.value) scrollContainer.value.style.cursor = "grab";
+}
+
+function onDrag(e) {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - scrollContainer.value.offsetLeft;
+  const walk = (x - startX) * 2;
+  scrollContainer.value.scrollLeft = scrollLeft - walk;
+}
+
+// --- KONFIGURASI API ---
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+const KOTA_LAT = -6.921;
+const KOTA_LON = 106.927;
+
 const iconConfig = {
   iconSize: [32, 32],
   iconAnchor: [14, 28],
@@ -153,22 +152,33 @@ const iconCafe = L.icon({ ...iconConfig, iconUrl: "/images/coffee-cup.png" });
 const iconDefault = L.icon({ ...iconConfig, iconUrl: "/images/resto.png" });
 const iconUser = L.icon({
   ...iconConfig,
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/535/535137.png", // Icon Orang/Lokasi
-  className: "marker-user", // Kita kasih class biar bisa di-style (opsional)
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/535/535137.png",
+  className: "marker-user",
 });
 
+// --- LIFECYCLE ---
 onMounted(() => {
-  initMap();
-  loadData();
-  loadCuaca();
+  // Fix Race Condition: Beri jeda agar animasi halaman/fullscreen selesai dulu
+  setTimeout(() => {
+    initMap();
+    loadData();
+    loadCuaca();
+  }, 500);
 
-  // --- TAMBAHAN: Deteksi Perubahan Full Screen ---
-  // Memaksa Leaflet menghitung ulang ukuran peta saat masuk/keluar full screen
   document.addEventListener("fullscreenchange", () => {
+    isFullscreen.value = !!document.fullscreenElement;
+    // Fix Peta Grey Area saat resize
     setTimeout(() => {
       if (map.value) map.value.invalidateSize();
-    }, 200); // Beri jeda sedikit agar animasi full screen selesai dulu
+    }, 200);
   });
+});
+
+onUnmounted(() => {
+  if (map.value) {
+    map.value.remove();
+    map.value = null;
+  }
 });
 
 if (filterContainerRef.value) {
@@ -176,13 +186,13 @@ if (filterContainerRef.value) {
   L.DomEvent.disableClickPropagation(filterContainerRef.value);
 }
 
-// --- FUNGSI 1: Load Cuaca ---
+// --- FUNCTIONS ---
+
 async function loadCuaca() {
   try {
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${KOTA_LAT}&lon=${KOTA_LON}&appid=${API_KEY}&units=metric&lang=id`;
     const res = await fetch(url);
     const data = await res.json();
-
     if (data.weather && data.weather.length > 0) {
       infoCuaca.value = {
         temp: Math.round(data.main.temp),
@@ -195,30 +205,25 @@ async function loadCuaca() {
   }
 }
 
-// --- FUNGSI 2: Inisialisasi Peta ---
 function initMap() {
   map.value = L.map("map", { zoomControl: false, preferCanvas: false }).setView(
     [KOTA_LAT, KOTA_LON],
     14
   );
 
-  map.value.on("zoomend", () => {
-    const z = map.value.getZoom();
-
-    // Logika Ukuran Berdasarkan Level Zoom
-    if (z >= 16) {
-      zoomClass.value = "zoom-large"; // Zoom Dekat (Ikon Besar)
-    } else if (z >= 14) {
-      zoomClass.value = "zoom-normal"; // Zoom Standar (Ikon Normal)
-    } else if (z === 13) {
-      zoomClass.value = "zoom-small"; // Zoom Sedang (Ikon Mengecil)
-    } else {
-      zoomClass.value = "zoom-hidden"; // Zoom Jauh (Ikon Hilang)
-    }
-  });
-
+  // Zoom Control di Kanan Bawah
   L.control.zoom({ position: "bottomright" }).addTo(map.value);
 
+  // Logic Zoom Class (CSS Marker Size)
+  map.value.on("zoomend", () => {
+    const z = map.value.getZoom();
+    if (z >= 16) zoomClass.value = "zoom-large";
+    else if (z >= 14) zoomClass.value = "zoom-normal";
+    else if (z === 13) zoomClass.value = "zoom-small";
+    else zoomClass.value = "zoom-hidden";
+  });
+
+  // Layers
   const osm = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     { attribution: "© OpenStreetMap" }
@@ -227,30 +232,26 @@ function initMap() {
     "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
     { attribution: "© CARTO", subdomains: "abcd", maxZoom: 20 }
   );
-
-  pointsLayer.value = L.layerGroup().addTo(map.value);
-  const batasLayer = L.layerGroup().addTo(map.value);
-
-  // Layer Hujan
   const rainLayer = L.tileLayer(
     `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`,
-    {
-      attribution: "© OpenWeatherMap",
-      maxZoom: 18,
-      opacity: 0.8,
-    }
+    { attribution: "© OpenWeatherMap", maxZoom: 18, opacity: 0.8 }
   );
 
   osm.addTo(map.value);
 
-  // Event Listener Layer Hujan
-  map.value.on("overlayadd", (event) => {
-    if (event.name === "Curah Hujan (Live)") isRainLayerActive.value = true;
+  // Layer Groups
+  pointsLayer.value = L.layerGroup().addTo(map.value); // Kuliner AKTIF default
+  const batasLayer = L.layerGroup(); // Batas wilayah TIDAK AKTIF default
+
+  // Event Listener Legend Hujan
+  map.value.on("overlayadd", (e) => {
+    if (e.name === "Curah Hujan (Live)") isRainLayerActive.value = true;
   });
-  map.value.on("overlayremove", (event) => {
-    if (event.name === "Curah Hujan (Live)") isRainLayerActive.value = false;
+  map.value.on("overlayremove", (e) => {
+    if (e.name === "Curah Hujan (Live)") isRainLayerActive.value = false;
   });
 
+  // Layer Control
   const baseMaps = { "Peta Jalan": osm, "Peta Malam": darkMap };
   const overlayMaps = {
     "Titik Kuliner": pointsLayer.value,
@@ -258,45 +259,45 @@ function initMap() {
     "Curah Hujan (Live)": rainLayer,
   };
 
-  let layerControl = null;
-
   function updateLayerPosition() {
     const isMobile = window.innerWidth <= 600;
+    // Jika mobile, taruh di kanan bawah (dekat zoom), jika desktop kanan atas
+    // Sesuaikan preferensi Anda
     const posisi = isMobile ? "bottomright" : "topright";
 
-    if (layerControl) {
-      map.value.removeControl(layerControl);
-    }
-
-    layerControl = L.control.layers(baseMaps, overlayMaps, {
-      position: posisi,
-    });
-    layerControl.addTo(map.value);
+    // Hapus control lama jika ada agar tidak duplikat
+    // (Implementasi sederhana: overwrite logic control layers leaflet)
+    // Disini kita biarkan default leaflet behavior atau update dinamis
+    // Untuk simplifikasi, kita pakai topright saja agar konsisten
   }
 
-  updateLayerPosition();
-  window.addEventListener("resize", updateLayerPosition);
+  L.control
+    .layers(baseMaps, overlayMaps, { position: "topright" })
+    .addTo(map.value);
 
+  // Load GeoJSON Batas Wilayah
   fetch("/batas_wilayah.geojson")
     .then((res) => res.json())
     .then((data) => {
       L.geoJSON(data, {
-        style: {
-          color: "#0000FF",
-          weight: 2,
-          opacity: 0.6,
-          fillOpacity: 0.05,
-        },
-        // --- PERBAIKAN DI SINI ---
-        smoothFactor: 1, // Ubah dari 0 ke 1 (Default). Agar ringan & tidak "drifting".
-        noClip: true, // Tetap true (Agar garis tidak putus/muncul garis lurus aneh).
-        // -------------------------
+        style: { color: "#0000FF", weight: 2, opacity: 0.6, fillOpacity: 0.05 },
+        smoothFactor: 1,
+        noClip: true,
       }).addTo(batasLayer);
     })
     .catch((err) => console.error("Gagal load batas:", err));
 }
 
-// --- FUNGSI 3: Load Data Kuliner ---
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+    isFullscreen.value = true;
+  } else {
+    document.exitFullscreen();
+    isFullscreen.value = false;
+  }
+}
+
 function loadData() {
   fetch("/kuliner.geojson")
     .then((res) => res.json())
@@ -321,6 +322,7 @@ function tampilkanData(dataGeoJSON) {
     },
     onEachFeature: (feature, layer) => {
       const props = feature.properties;
+      // Gambar Dummy sesuai kategori
       let gambarUrl =
         "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400";
       const jenis = (props.Jenis_Kuliner || "").toLowerCase();
@@ -341,9 +343,9 @@ function tampilkanData(dataGeoJSON) {
           <span style="background:#eee; padding:2px 8px; border-radius:4px; font-size:0.7rem; color: #555;">${props.Jenis_Kuliner}</span>
           <p style="margin: 8px 0; font-size: 0.85rem;">⭐ <b>${props.Rating}</b> (${props.Jumlah_Review})</p>
           <button onclick="panggilRute(${feature.geometry.coordinates[1]}, ${feature.geometry.coordinates[0]})"
-        style="width:100%; background: #2ec4b6; color: white; border:none; padding: 8px; border-radius: 4px; cursor:pointer; margin-top:5px;">
-   <i class="fas fa-route"></i> Rute Jalan (In-App)
-</button>
+            style="width:100%; background: #2ec4b6; color: white; border:none; padding: 8px; border-radius: 4px; cursor:pointer; margin-top:5px;">
+            <i class="fas fa-route"></i> Rute Jalan (In-App)
+          </button>
         </div>
       `;
       layer.bindPopup(popupContent);
@@ -351,46 +353,37 @@ function tampilkanData(dataGeoJSON) {
   }).addTo(pointsLayer.value);
 }
 
-function onSearchInput() {
-  // 1. Paksa tombol filter kembali ke "Semua"
-  filterAktif.value = "all";
+function onSearchFocus(event) {
+  setTimeout(() => {
+    event.target.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 300);
+}
 
-  // 2. Baru jalankan proses penyaringan
+function onSearchInput() {
+  filterAktif.value = "all";
   prosesFilter();
 }
 
 function prosesFilter() {
   if (!dataKulinerMentah.value) return;
-
   const query = searchQuery.value.toLowerCase();
   const kategori = filterAktif.value;
 
-  // Filter array features
   const hasilFilter = dataKulinerMentah.value.features.filter((feature) => {
     const props = feature.properties;
     const namaTempat = props.Nama_Tempat.toLowerCase();
     const jenisKuliner = props.Jenis_Kuliner;
-
-    // Cek kecocokan Search Text
     const matchSearch = namaTempat.includes(query);
-
-    // Cek kecocokan Kategori
     const matchKategori = kategori === "all" || jenisKuliner === kategori;
-
-    // Harus cocok KEDUANYA
     return matchSearch && matchKategori;
   });
 
-  // Tampilkan hasil
-  tampilkanData({
-    type: "FeatureCollection",
-    features: hasilFilter,
-  });
+  tampilkanData({ type: "FeatureCollection", features: hasilFilter });
 }
 
 function gantiFilter(kategori) {
   filterAktif.value = kategori;
-  prosesFilter(); // Panggil fungsi utama
+  prosesFilter();
 }
 
 function cariLokasiSaya() {
@@ -410,9 +403,9 @@ function cariLokasiSaya() {
 
 function hapusRute() {
   if (routingControl.value) {
-    map.value.removeControl(routingControl.value); // Hapus dari peta
-    routingControl.value = null; // Reset variabel
-    isRouteActive.value = false; // Sembunyikan tombol
+    map.value.removeControl(routingControl.value);
+    routingControl.value = null;
+    isRouteActive.value = false;
   }
 }
 
@@ -421,46 +414,29 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
     alert("GPS mati/tidak didukung");
     return;
   }
-
   navigator.geolocation.getCurrentPosition((pos) => {
     const { latitude, longitude } = pos.coords;
-
-    // 1. Hapus rute lama jika ada
     hapusRute();
 
-    // 2. Buat rute baru dengan STYLING BIRU
     routingControl.value = L.Routing.control({
       waypoints: [
         L.latLng(latitude, longitude),
         L.latLng(latTujuan, lngTujuan),
       ],
       routeWhileDragging: false,
-      language: "en", // Wajib 'en' agar tidak error
-      show: true, // Tampilkan instruksi teks
-
-      // --- STYLING GARIS RUTE (WARNA BIRU) ---
+      language: "en",
+      show: true,
       lineOptions: {
         styles: [
-          // Lapisan 1: Garis Putih Tebal (Outline/Border) agar kontras di peta gelap/satelit
           { color: "white", opacity: 0.9, weight: 9 },
-          // Lapisan 2: Garis Biru Utama (Mirip Google Maps)
           { color: "#4285F4", opacity: 1, weight: 6 },
         ],
       },
-      // ----------------------------------------
-
       serviceUrl: "https://router.project-osrm.org/route/v1",
-
-      // Opsional: Kustomisasi Marker Asal/Tujuan (jika ingin mengubah icon default)
-      createMarker: function () {
-        return null;
-      }, // Hilangkan marker tambahan (pakai marker yang sudah ada)
+      createMarker: () => null,
     }).addTo(map.value);
 
-    // Aktifkan status rute agar tombol "Tutup Rute" muncul
     isRouteActive.value = true;
-
-    // Tutup popup marker agar peta bersih
     map.value.closePopup();
   });
 }
@@ -480,146 +456,44 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   z-index: 1;
 }
 
-.btn-gps {
+/* --- MAP CONTROLS (Fullscreen & GPS) --- */
+.map-controls {
   position: absolute;
-  bottom: 100px; /* Di atas tombol zoom default Leaflet */
+  bottom: 100px;
   right: 10px;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-control {
   background: white;
   border: none;
   width: 35px;
   height: 35px;
   border-radius: 5px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   color: #333;
   font-size: 1.2rem;
-  transition: 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.2s;
 }
 
-.btn-gps:hover {
+.btn-control:hover {
   background: #f4f4f4;
   color: #ff9f1c;
 }
 
-.btn-gps:active {
+.btn-control:active {
   background: #e9e9e9;
-  transform: translateY(2px);
+  transform: scale(0.95);
 }
 
-/* --- LEGENDA BAR HUJAN (MODERN) --- */
-#legend-rain {
-  /* HAPUS position: absolute, top, left, transform, dll */
-
-  /* Style Tampilan */
-  background: rgba(255, 255, 255, 0.95);
-  padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  width: 160px;
-  text-align: center;
-  animation: slideIn 0.3s ease;
-
-  /* PENTING: Agar user bisa klik tombol di bawahnya jika perlu, 
-     tapi legend sendiri harus merespon sentuhan */
-  pointer-events: auto;
-
-  /* Jarak antara Legend dan Search Bar */
-  margin-bottom: 5px;
-}
-
-.legend-header {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-}
-
-/* Batang Gradasi Warna */
-.rain-gradient-bar {
-  width: 100%;
-  height: 8px;
-  border-radius: 4px;
-  /* Gradasi dari Biru (Ringan) -> Ungu -> Merah/Kuning (Lebat) */
-  background: linear-gradient(to right, #95b6ff, #7d4199, #c93c83, #ffe600);
-  margin-bottom: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Label Kecil di Bawah Batang */
-.legend-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.7rem;
-  color: #666;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* --- WIDGET CUACA --- */
-#weather-widget {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 5px 15px 5px 5px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  animation: fadeIn 0.5s ease;
-}
-
-#weather-widget img {
-  width: 40px;
-  height: 40px;
-}
-
-.weather-info {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.weather-info .temp {
-  font-weight: bold;
-  font-size: 1rem;
-  color: #333;
-}
-
-.weather-info .desc {
-  font-size: 0.75rem;
-  color: #666;
-  text-transform: capitalize;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -10px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-/* --- TOMBOL BERANDA --- */
+/* --- HOME BUTTON --- */
 .btn-home {
   position: absolute;
   top: 20px;
@@ -652,9 +526,7 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   width: 100%;
   padding: 0 15px;
   box-sizing: border-box;
-  pointer-events: none; /* Container tembus klik */
-
-  /* Susun ke bawah: Search dulu, baru tombol */
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -662,7 +534,7 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
 }
 
 .search-box {
-  pointer-events: auto; /* Agar bisa diketik */
+  pointer-events: auto;
   background: white;
   padding: 8px 15px;
   border-radius: 50px;
@@ -670,13 +542,8 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   display: flex;
   align-items: center;
   width: 90%;
-  max-width: 400px; /* Jangan terlalu lebar di desktop */
+  max-width: 400px;
   transition: 0.3s;
-}
-
-.search-box:focus-within {
-  box-shadow: 0 4px 20px rgba(255, 159, 28, 0.3);
-  transform: translateY(-2px);
 }
 
 .search-box i {
@@ -702,25 +569,14 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   max-width: 600px;
   padding-bottom: 5px;
   justify-content: flex-start;
-
-  /* --- UPDATE --- */
-  cursor: grab; /* Menampilkan icon tangan terbuka */
+  cursor: grab;
   pointer-events: auto;
   touch-action: pan-x;
   -webkit-overflow-scrolling: touch;
   z-index: 1002;
-
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-
-  /* Agar user tidak bisa select text saat drag */
   user-select: none;
+  scrollbar-width: none;
 }
-
-.filter-buttons:active {
-  cursor: grabbing; /* Menampilkan icon tangan menggenggam saat klik */
-}
-/* Sembunyikan scrollbar Chrome/Safari */
 .filter-buttons::-webkit-scrollbar {
   display: none;
 }
@@ -730,15 +586,15 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   background: white;
   border: 1px solid #ddd;
   color: #555;
-  padding: 8px 16px; /* Sedikit lebih besar */
+  padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
   font-family: "Poppins", sans-serif;
   font-size: 0.9rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: 0.2s;
-  white-space: nowrap; /* Teks tombol tidak turun baris */
-  flex-shrink: 0; /* Tombol tidak mengecil */
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .btn-filter.active {
@@ -749,14 +605,80 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   font-weight: 600;
 }
 
-.btn-close-route {
+/* --- LEGEND & WEATHER --- */
+#legend-rain {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  width: 160px;
+  text-align: center;
+  pointer-events: auto;
+  margin-bottom: 5px;
+}
+.legend-header {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+.rain-gradient-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #95b6ff, #7d4199, #c93c83, #ffe600);
+  margin-bottom: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #666;
+}
+
+#weather-widget {
   position: absolute;
-  bottom: 120px; /* Muncul di atas tombol GPS */
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 5px 15px 5px 5px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#weather-widget img {
+  width: 40px;
+  height: 40px;
+}
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.weather-info .temp {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+}
+.weather-info .desc {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: capitalize;
+}
 
-  background-color: #ff9f1c; /* Warna Merah Bahaya */
+/* --- BUTTON CLOSE ROUTE --- */
+.btn-close-route {
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background-color: #ff9f1c;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -770,62 +692,53 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   transition: 0.3s;
   font-family: "Poppins", sans-serif;
 }
-
 .btn-close-route:hover {
   background-color: #cc7e12;
-  transform: translateX(-50%) translateY(-2px);
 }
 
-.btn-close-route i {
-  font-size: 1rem;
-}
-
+/* --- MARKER STYLES (ZOOM) --- */
 :deep(.leaflet-marker-icon) {
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  transform-origin: bottom center; /* Titik tumpu di bawah */
+  transform-origin: bottom center;
 }
-
-/* 1. Zoom Normal (Level 14-15) - Ukuran Asli 28x28 */
-.zoom-normal :deep(.leaflet-marker-icon) {
-  /* Tidak perlu diubah, pakai default */
-}
-
-/* 2. Zoom Besar (Level 16+) - Sedikit Membesar */
 .zoom-large :deep(.leaflet-marker-icon) {
   width: 36px !important;
   height: 36px !important;
-  margin-left: -18px !important; /* Setengah dari width */
-  margin-top: -36px !important; /* Full height */
-  z-index: 1000 !important; /* Selalu di atas */
+  margin-left: -18px !important;
+  margin-top: -36px !important;
+  z-index: 1000 !important;
 }
-
-/* 3. Zoom Kecil (Level 13) - Mengecil */
 .zoom-small :deep(.leaflet-marker-icon) {
   width: 18px !important;
   height: 18px !important;
-  margin-left: -9px !important; /* Setengah dari width */
-  margin-top: -18px !important; /* Full height */
+  margin-left: -9px !important;
+  margin-top: -18px !important;
   opacity: 0.8;
 }
-
-/* 4. Zoom Jauh (Level < 13) - Hilang/Sembunyi */
 .zoom-hidden :deep(.leaflet-marker-icon),
 .zoom-hidden :deep(.leaflet-marker-shadow) {
   width: 0 !important;
   height: 0 !important;
   opacity: 0;
-  pointer-events: none; /* Agar tidak bisa diklik saat hilang */
+  pointer-events: none;
 }
 
 /* --- RESPONSIVE MOBILE --- */
 @media (max-width: 600px) {
   .btn-close-route {
-    bottom: 180px; /* Sesuaikan agar tidak menutupi search bar/filter */
+    bottom: 220px; /* Di atas kontrol peta */
     width: auto;
     white-space: nowrap;
   }
+
+  /* Geser kontrol peta agak naik agar tidak tertutup filter */
+  .map-controls {
+    bottom: 140px;
+    right: 10px;
+  }
+
   :deep(.leaflet-control-zoom) {
-    display: none !important;
+    display: none !important; /* Hilangkan zoom bawaan di HP */
   }
 
   :deep(.leaflet-touch .leaflet-control-layers-toggle) {
@@ -833,34 +746,9 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
     height: 35px;
   }
 
-  :deep(.leaflet-bottom) {
-    bottom: 120px;
-  }
-
-  :deep(.leaflet-top) {
-    top: 80px;
-  }
-
-  /* #weather-widget {
-    padding: 5px 10px 5px 5px;
-    top: auto;
-    bottom: 150px;
-    transform: none;
-    left: 10px;
-    border-radius: 20px;
-  } */
-
-  /* #weather-widget img {
-    width: 35px;
-    height: 35px;
-  } */
-
-  .weather-info .temp {
-    font-size: 15px;
-  }
-
-  .legend-header {
-    font-size: 0.75rem;
+  /* Atur posisi tombol layer leaflet */
+  :deep(.leaflet-top.leaflet-right) {
+    top: 80px; /* Di bawah tombol back */
   }
 
   .btn-home .text-home {
@@ -875,10 +763,6 @@ function buatRuteKeTujuan(latTujuan, lngTujuan) {
   .btn-filter {
     font-size: 0.8rem;
     padding: 6px 12px;
-  }
-
-  .btn-gps {
-    bottom: 110px;
   }
 }
 </style>
